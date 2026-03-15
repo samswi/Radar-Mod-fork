@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "2.1.0"
-    id("fabric-loom") version "1.13-SNAPSHOT"
+    kotlin("jvm") version "2.3.0"
+    id("net.fabricmc.fabric-loom") version "1.15-SNAPSHOT"
     id("maven-publish")
 }
 
@@ -14,7 +14,7 @@ base {
     archivesName.set(project.property("archives_base_name") as String)
 }
 
-val targetJavaVersion = 21
+val targetJavaVersion = 25
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
@@ -53,12 +53,11 @@ repositories {
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft("com.mojang:minecraft:${project.property("minecraft_version")}")
-    mappings(loom.officialMojangMappings())
-    modImplementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
+    implementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
 
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
+    implementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_api_version")}")
 
-    modApi("com.terraformersmc:modmenu:12.0.0")
+    api("com.terraformersmc:modmenu:18.0.0-alpha.6")
 }
 
 tasks.processResources {
@@ -73,7 +72,7 @@ tasks.processResources {
                 "version" to project.version,
                 "minecraft_version" to project.property("minecraft_version"),
                 "loader_version" to project.property("loader_version"),
-                "fabric_version" to project.property("fabric_version")
+                "fabric_api_version" to project.property("fabric_api_version")
             )
         )
     }

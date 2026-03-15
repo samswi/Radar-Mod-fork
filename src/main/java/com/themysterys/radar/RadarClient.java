@@ -6,7 +6,7 @@ import com.themysterys.radar.utils.AuthUtils;
 import com.themysterys.radar.utils.FishingSpot;
 import com.themysterys.radar.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -105,10 +105,10 @@ public class RadarClient implements ClientModInitializer {
         });
 
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(ClientCommandManager.literal("radar").then(ClientCommandManager.literal("settings").executes(context -> {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(ClientCommands.literal("radar").then(ClientCommands.literal("settings").executes(context -> {
             Minecraft.getInstance().schedule(() -> Minecraft.getInstance().setScreen(new RadarSettingsScreen((null))));
             return 1;
-        })).then(ClientCommandManager.literal("colors").executes(context -> {
+        })).then(ClientCommands.literal("colors").executes(context -> {
             MutableComponent[] components = new MutableComponent[] {
                     Component.literal("Radar particle colors:"),
                     Component.literal("Green").withStyle(ChatFormatting.GREEN).append(Component.literal(": Successfully added to map").withStyle(ChatFormatting.WHITE)),
@@ -126,10 +126,10 @@ public class RadarClient implements ClientModInitializer {
             }
             Utils.sendMessage(result, true);
             return 1;
-        })).then(ClientCommandManager.literal("map").executes(context -> {
+        })).then(ClientCommands.literal("map").executes(context -> {
             Minecraft.getInstance().schedule(() -> Util.getPlatform().openUri("https://radar.themysterys.com/"));
             return 1;
-        })).then(ClientCommandManager.literal("autorod").executes(context -> {
+        })).then(ClientCommands.literal("autorod").executes(context -> {
             if (!isOnIsland) return 1;
             AutoRod.sendMessage();
             return 1;
