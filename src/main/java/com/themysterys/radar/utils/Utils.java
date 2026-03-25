@@ -7,7 +7,6 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.*;
-import net.minecraft.network.protocol.game.ClientboundSetDisplayObjectivePacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.ARGB;
@@ -90,23 +89,14 @@ public class Utils {
         return islandList.containsKey(islandName);
     }
 
-    public static void parseSidebar(ClientboundSetDisplayObjectivePacket packet){
+    public static void parseSidebar(){
         Minecraft client = Minecraft.getInstance();
 
         if (client.player == null) return;
         if (client.level == null) return;
 
-        String objectiveName;
         Scoreboard scoreboard = client.level.getScoreboard();
-
-        if (packet != null) {
-            objectiveName = packet.getObjectiveName();
-        }
-        else {
-            objectiveName = Objects.requireNonNull(scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR)).getName();
-        }
-
-        Objective objective = scoreboard.getObjective(objectiveName);
+        Objective objective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR);
 
         if (objective == null) return;
 

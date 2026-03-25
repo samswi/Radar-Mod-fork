@@ -3,6 +3,7 @@ package com.themysterys.radar.mixins;
 import com.themysterys.radar.utils.Utils;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ClientboundSetDisplayObjectivePacket;
+import net.minecraft.network.protocol.game.ClientboundSetObjectivePacket;
 import net.minecraft.world.scores.DisplaySlot;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +20,16 @@ public class S2CPosMixin {
 
         if (packet.getSlot() != DisplaySlot.SIDEBAR) return;
 
-        Utils.parseSidebar(packet);
+        Utils.parseSidebar();
+
+    }
+
+    @Inject(method = "handleAddObjective", at = @At("TAIL"))
+    private void onObjectiveChanged(ClientboundSetObjectivePacket packet, CallbackInfo ci){
+        if (packet.getMethod() != ClientboundSetObjectivePacket.METHOD_CHANGE) return;
+        if (!Utils.isOnIsland()) return;
+
+        Utils.parseSidebar();
 
     }
 }

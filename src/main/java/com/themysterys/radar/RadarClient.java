@@ -181,7 +181,7 @@ public class RadarClient implements ClientModInitializer {
     }
 
     private void getFishingSpot(Player player, FishingHook fishHook) {
-        Utils.parseSidebar(null);
+        Utils.parseSidebar();
 
         BlockPos blockPos = fishHook.getOnPos();
         AABB box = AABB.ofSize(blockPos.getCenter(), 3.5, 6.0, 3.5);
