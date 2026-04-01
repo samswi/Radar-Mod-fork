@@ -14,8 +14,10 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
@@ -73,7 +75,7 @@ public class RadarClient implements ClientModInitializer {
                         Component.literal("Thank you for installing Radar."),
                         Component.literal("Sharing your username is ").append(Component.literal("disabled by default ").withColor(16777045)).append("and can be"),
                         Component.literal("changed in the configuration menu."),
-                        Component.literal("To access the configuration menu, press ").append(Component.literal("F3 + F").withStyle(ChatFormatting.BOLD,ChatFormatting.YELLOW)).append("."),
+                        Component.literal("To access the configuration menu, run ").append(Component.literal("/radar settings").withStyle(ChatFormatting.BOLD,ChatFormatting.YELLOW).withStyle(Style.EMPTY.withClickEvent(new ClickEvent.RunCommand("/radar settings")))).append("."),
                         Component.literal("Happy Fishing")
                 };
                 MutableComponent result = null;
