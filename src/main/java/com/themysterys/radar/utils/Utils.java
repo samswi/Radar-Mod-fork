@@ -109,6 +109,12 @@ public class Utils {
                     Minecraft.getInstance().schedule(() -> player.playSound(SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath("radar", "fishing_spot_existing"))));
                 }
             }
+            case UPDATED -> {
+                particleEffect = new DustParticleOptions(ARGB.color(255, 255, 0), 1);
+                if (Radar.getInstance().getConfig().playSound) {
+                    Minecraft.getInstance().schedule(() -> player.playSound(SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath("radar", "fishing_spot_existing"))));
+                }
+            }
             case UNAUTHORISED -> particleEffect = new DustParticleOptions(ARGB.colorFromFloat(1, 1, 0.5f, 0), 1);
             case FAILED -> particleEffect = new DustParticleOptions(ARGB.color(255, 0, 0), 1);
             case null, default -> {
@@ -151,6 +157,8 @@ public class Utils {
                     spawnPartials(MapStatus.SUCCESS, 5);
                 } else if (response.statusCode() == 200) {
                     spawnPartials(MapStatus.EXISTS, 5);
+                } else if (response.statusCode() == 204) {
+                    spawnPartials(MapStatus.UPDATED, 5);
                 } else if (response.statusCode() == 401) {
                     spawnPartials(MapStatus.UNAUTHORISED, 5);
                 } else {
@@ -167,7 +175,7 @@ public class Utils {
     }
 
     public enum MapStatus {
-        SUCCESS, EXISTS, UNAUTHORISED, FAILED,
+        SUCCESS, EXISTS, UPDATED, UNAUTHORISED, FAILED,
     }
 
     public enum SpotStock {
