@@ -2,6 +2,7 @@ package com.themysterys.radar;
 
 import com.themysterys.radar.config.RadarSettingsScreen;
 import com.themysterys.radar.modules.AutoRod;
+import com.themysterys.radar.modules.NoxesiumIntegration;
 import com.themysterys.radar.utils.AuthUtils;
 import com.themysterys.radar.utils.FishingSpot;
 import com.themysterys.radar.utils.Utils;
@@ -25,6 +26,7 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class RadarClient implements ClientModInitializer {
 
@@ -46,6 +48,7 @@ public class RadarClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         instance = this;
+        new NoxesiumIntegration().init();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (!Radar.getInstance().getConfig().enabled) return;
@@ -181,7 +184,6 @@ public class RadarClient implements ClientModInitializer {
     }
 
     private void getFishingSpot(Player player, FishingHook fishHook) {
-        Utils.parseSidebar(null);
 
         BlockPos blockPos = fishHook.getOnPos();
         AABB box = AABB.ofSize(blockPos.getCenter(), 3.5, 6.0, 3.5);
@@ -199,9 +201,14 @@ public class RadarClient implements ClientModInitializer {
             int fishingSpotZ = textDisplay.getBlockZ();
 
             List<String> perks = Arrays.stream(text.split("\n")).filter(line -> line.contains("+")).map(line -> "+" + line.split("\\+")[1]).toList();
+            Utils.SpotStock stock = Utils.SpotStock.valueOf(Arrays.stream(text.split("\n")).filter(line -> line.contains("Stock:")).toList().getFirst().split("Stock: ")[1].toUpperCase(Locale.ROOT));
+
+            if (stock.isLower(Utils.SpotStock.MEDIUM)) stock = Utils.SpotStock.MEDIUM;
+
+            Utils.log(stock.toString());
 
             if (!perks.isEmpty()) {
-                currentFishingSpot = new FishingSpot(fishingSpotX + "/" + fishingSpotZ, perks, currentIsland, textDisplay);
+                currentFishingSpot = new FishingSpot(fishingSpotX + "/" + fishingSpotZ, perks, stock, currentIsland, textDisplay);
 
                 Utils.sendRequest("spots", currentFishingSpot.format());
 
@@ -221,9 +228,6 @@ public class RadarClient implements ClientModInitializer {
         if (island == null) {
             isFishing = false;
             resetFishingSpot();
-        }
-        else {
-            island = Utils.islandList.get(island);
         }
         currentIsland = island;
     }

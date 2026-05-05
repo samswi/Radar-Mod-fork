@@ -10,12 +10,14 @@ import java.util.UUID;
 public class FishingSpot {
     private final String cords;
     private final List<String> perks;
+    private final Utils.SpotStock stock;
     private final String island;
     private final Display.TextDisplay entity;
 
-    public FishingSpot(String cords, List<String> perks, String island, Display.TextDisplay entity) {
+    public FishingSpot(String cords, List<String> perks, Utils.SpotStock stock, String island, Display.TextDisplay entity) {
         this.cords = cords;
         this.perks = perks;
+        this.stock = stock;
         this.island = island;
         this.entity = entity;
     }
@@ -43,6 +45,7 @@ public class FishingSpot {
 
         json.append("],\n");
         json.append("\"island\": \"").append(island).append("\",\n");
+        json.append("\"stock\": \"").append(stock).append("\",\n");
 
         json.append("\"uuid\": \"").append(uuid).append("\",\n");
         json.append("\"username\": \"").append(username).append("\",\n");

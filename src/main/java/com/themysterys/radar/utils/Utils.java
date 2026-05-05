@@ -7,15 +7,11 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.*;
-import net.minecraft.network.protocol.game.ClientboundSetDisplayObjectivePacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
-import net.minecraft.world.scores.DisplaySlot;
-import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Scoreboard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +22,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,16 +29,16 @@ public class Utils {
     private static final Logger logger = LoggerFactory.getLogger("Radar");
     private static final List<Integer> allowedStatusCodes = List.of(200, 201, 400, 401);
 
-    public static Map<String,String> islandList = Map.of(
-            "verdant_woods", "temperate_1",
-            "floral_forest", "temperate_2",
-            "dark_grove", "temperate_3",
-            "tropical_overgrowth", "tropical_1",
-            "coral_shores", "tropical_2",
-            "twisted_swamp", "tropical_3",
-            "ancient_sands", "barren_1",
-            "blazing_canyon", "barren_2",
-            "ashen_wastes", "barren_3"
+    public static List<String> islandList = List.of(
+            "temperate_1",
+            "temperate_2",
+            "temperate_3",
+            "tropical_1",
+            "tropical_2",
+            "tropical_3",
+            "barren_1",
+            "barren_2",
+            "barren_3"
     );
 
     private static MutableComponent getPrefix() {
@@ -87,36 +82,7 @@ public class Utils {
     }
 
     public static Boolean isOnFishingIsland(String islandName) {
-        return islandList.containsKey(islandName);
-    }
-
-    public static void parseSidebar(ClientboundSetDisplayObjectivePacket packet){
-        Minecraft client = Minecraft.getInstance();
-
-        if (client.player == null) return;
-        if (client.level == null) return;
-
-        String objectiveName;
-        Scoreboard scoreboard = client.level.getScoreboard();
-
-        if (packet != null) {
-            objectiveName = packet.getObjectiveName();
-        }
-        else {
-            objectiveName = Objects.requireNonNull(scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR)).getName();
-        }
-
-        Objective objective = scoreboard.getObjective(objectiveName);
-
-        if (objective == null) return;
-
-        String locationName = objective.getDisplayName().getString().toLowerCase().replace("mcci: ", "").replace(" ", "_");
-
-        if (Utils.isOnFishingIsland(locationName)) {
-            RadarClient.getInstance().setIsland(locationName);
-        } else {
-            RadarClient.getInstance().setIsland(null);
-        }
+        return islandList.contains(islandName);
     }
 
     public static void spawnPartials(MapStatus status, int count) {
@@ -202,5 +168,19 @@ public class Utils {
 
     public enum MapStatus {
         SUCCESS, EXISTS, UNAUTHORISED, FAILED,
+    }
+
+    public enum SpotStock {
+        DEPLETED(0), LOW(1), MEDIUM(2), HIGH(3), VERY_HIGH(4), PLENTIFUL(5);
+
+        private int value;
+
+        SpotStock(int i) {
+            this.value = i;
+        }
+
+        public boolean isLower(SpotStock compare) {
+            return this.value < compare.value;
+        }
     }
 }
